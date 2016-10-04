@@ -3,6 +3,9 @@
 Copyright 2016 Yahoo Inc.
 Licensed under the terms of the 2 clause BSD license. 
 Please see LICENSE file in the project root for terms.
+
+Instruction: 
+    If you want to use this script to generate batch predictions, make sure you have a layer named as "prob_3" in your deploy.prototxt
 """
 
 import numpy as np
@@ -134,7 +137,7 @@ def main(argv):
         caffe_transformer.set_channel_swap('data', (2, 1, 0))  # swap channels from RGB to BGR
     
         # Classify.
-        scores = caffe_preprocess_and_compute(image_data, caffe_transformer=caffe_transformer, caffe_net=nsfw_net, output_layers=['prob_3'])
+        scores = caffe_preprocess_and_compute(image_data, caffe_transformer=caffe_transformer, caffe_net=nsfw_net, output_layers=['prob'])
     
         # Scores is the array containing SFW / NSFW image probabilities
         # scores[1] indicates the NSFW probability
