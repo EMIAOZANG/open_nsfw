@@ -126,6 +126,7 @@ def main(argv):
     nsfw_net = caffe.Net(args.model_def,  # pylint: disable=invalid-name
         args.pretrained_model, caffe.TEST)
 
+    start_time = time.time()
     for image_data in image_list:
     
         # Load transformer
@@ -145,6 +146,10 @@ def main(argv):
             print >> output_fp, os.path.split(image_data)[-1] + ' ' + str(np.argmax(scores))
         else:
             print >> output_fp, os.path.split(image_data)[-1] + ' ' + ' '.join([str(x) for x in scores])
+    end_time = time.time()
+    time_taken = end_time - start_time
+    # print system log to file
+    print >> sys.stdout, "{} examples processed in {} secs, that is {} sec/imgs".format(len(image_list), time_taken, time_taken / float(len(image_list)))
 
 if __name__ == '__main__':
     main(sys.argv)
