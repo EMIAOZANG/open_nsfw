@@ -14,9 +14,8 @@ layer {
   }
   data_param {
     source: "examples/imagenet/ilsvrc12_train_lmdb"
-    batch_size: 20
-    new_height: 256
-    new_width: 256
+    batch_size: 10
+    backend: LMDB
   }
   include {
     phase: TRAIN
@@ -25,7 +24,7 @@ layer {
 # TEST INPUT LAYER
 layer {
   name: "data"
-  type: "Data"
+  type: "ImageData"
   top: "data"
   top: "label"
   transform_param {
@@ -33,9 +32,10 @@ layer {
     mean_value: 104
     mean_value: 117
     mean_value: 123
+    crop_size: 224
   }
   image_data_param {
-    source: "examples/imagenet/ilsvrc12_val_lmdb"
+    source: "/ebs/labels/val_micro.txt"
     batch_size: 20
     new_height: 224
     new_width: 224
