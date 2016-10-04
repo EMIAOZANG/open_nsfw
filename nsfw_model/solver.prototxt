@@ -1,0 +1,15 @@
+net: "models/open_nsfw/nsfw_model/fine_tune.prototxt"
+test_iter: 2000
+test_interval: 2000
+base_lr: 0.001
+lr_policy: "step"
+gamma: 0.1
+stepsize: 100
+display: 20
+max_iter: 100000
+momentum: 0.9
+iter_size: 10
+weight_decay: 0.0005
+snapshot: 2000
+snapshot_prefix: "/ebs/models/nsfw_model_pinterest_iter_"
+solver_mode: GPU
