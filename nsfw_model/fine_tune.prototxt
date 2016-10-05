@@ -2843,11 +2843,11 @@ layer {
   bottom: "eltwise_stage2_block5"
   top: "conv_stage3_block0_proj_shortcut"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -2900,11 +2900,11 @@ layer {
   bottom: "eltwise_stage2_block5"
   top: "conv_stage3_block0_branch2a"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -2963,11 +2963,11 @@ layer {
   bottom: "conv_stage3_block0_branch2a"
   top: "conv_stage3_block0_branch2b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3026,11 +3026,11 @@ layer {
   bottom: "conv_stage3_block0_branch2b"
   top: "conv_stage3_block0_branch2c"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3096,11 +3096,11 @@ layer {
   bottom: "eltwise_stage3_block0"
   top: "conv_stage3_block1_branch2a"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3159,11 +3159,11 @@ layer {
   bottom: "conv_stage3_block1_branch2a"
   top: "conv_stage3_block1_branch2b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3222,11 +3222,11 @@ layer {
   bottom: "conv_stage3_block1_branch2b"
   top: "conv_stage3_block1_branch2c"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3292,11 +3292,11 @@ layer {
   bottom: "eltwise_stage3_block1"
   top: "conv_stage3_block2_branch2a"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3355,11 +3355,11 @@ layer {
   bottom: "conv_stage3_block2_branch2a"
   top: "conv_stage3_block2_branch2b"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3418,11 +3418,11 @@ layer {
   bottom: "conv_stage3_block2_branch2b"
   top: "conv_stage3_block2_branch2c"
   param {
-    lr_mult: 0
+    lr_mult: 1
     decay_mult: 1
   }
   param {
-    lr_mult: 0
+    lr_mult: 2
     decay_mult: 0
   }
   convolution_param {
@@ -3499,11 +3499,11 @@ layer {
    bottom: "pool"
    top: "fc_nsfw_3"
    param {
-       lr_mult: 1
+       lr_mult: 20
        decay_mult: 1
    }
    param {
-       lr_mult: 2
+       lr_mult: 40
        decay_mult: 0
    }
    inner_product_param{
