@@ -1,7 +1,7 @@
-net: "models/open_nsfw/nsfw_model/train_classifier_lmdb.prototxt"
+net: "models/open_nsfw/nsfw_model/fine_tune_lmdb.prototxt"
 test_iter: 2000
 test_interval: 2000
-base_lr: 0.01
+base_lr: 0.0005
 lr_policy: "step"
 gamma: 0.1
 stepsize: 2000

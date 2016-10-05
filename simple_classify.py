@@ -3,6 +3,9 @@
 Copyright 2016 Yahoo Inc.
 Licensed under the terms of the 2 clause BSD license. 
 Please see LICENSE file in the project root for terms.
+
+Instruction: 
+    If you want to use this script to generate batch predictions, make sure you have a layer named as "prob_3" in your deploy.prototxt
 """
 
 import numpy as np
@@ -112,26 +115,41 @@ def main(argv):
     args = parser.parse_args()
     image_data = open(args.input_file).read()
 
+    # batch processing
+    image_list = []
+    if os.path.isdir(args.input_file):
+        image_list = [x for x in os.listdir() if os.path.splitext(x)[-1] = '.jpg']
+    else:
+        image_list.append(args.input_file) # assumes input file is a jpg image
+
     # Pre-load caffe model.
     nsfw_net = caffe.Net(args.model_def,  # pylint: disable=invalid-name
         args.pretrained_model, caffe.TEST)
 
-    # Load transformer
-    # Note that the parameters are hard-coded for best results
-    caffe_transformer = caffe.io.Transformer({'data': nsfw_net.blobs['data'].data.shape})
-    caffe_transformer.set_transpose('data', (2, 0, 1))  # move image channels to outermost
-    caffe_transformer.set_mean('data', np.array([104, 117, 123]))  # subtract the dataset-mean value in each channel
-    caffe_transformer.set_raw_scale('data', 255)  # rescale from [0, 1] to [0, 255]
-    caffe_transformer.set_channel_swap('data', (2, 1, 0))  # swap channels from RGB to BGR
-
-    # Classify.
-    scores = caffe_preprocess_and_compute(image_data, caffe_transformer=caffe_transformer, caffe_net=nsfw_net, output_layers=['prob'])
-
-    # Scores is the array containing SFW / NSFW image probabilities
-    # scores[1] indicates the NSFW probability
-    print "NSFW score:  " , scores[1]
-
-
+    start_time = time.time()
+    for image_data in image_list:
+    
+        # Load transformer
+        # Note that the parameters are hard-coded for best results
+        caffe_transformer = caffe.io.Transformer({'data': nsfw_net.blobs['data'].data.shape})
+        caffe_transformer.set_transpose('data', (2, 0, 1))  # move image channels to outermost
+        caffe_transformer.set_mean('data', np.array([104, 117, 123]))  # subtract the dataset-mean value in each channel
+        caffe_transformer.set_raw_scale('data', 255)  # rescale from [0, 1] to [0, 255]
+        caffe_transformer.set_channel_swap('data', (2, 1, 0))  # swap channels from RGB to BGR
+    
+        # Classify.
+        scores = caffe_preprocess_and_compute(image_data, caffe_transformer=caffe_transformer, caffe_net=nsfw_net, output_layers=['prob'])
+    
+        # Scores is the array containing SFW / NSFW image probabilities
+        # scores[1] indicates the NSFW probability
+        if args.input_mode == 'labels':
+            print >> output_fp, os.path.split(image_data)[-1] + ' ' + str(np.argmax(scores))
+        else:
+            print >> output_fp, os.path.split(image_data)[-1] + ' ' + ' '.join([str(x) for x in scores])
+    end_time = time.time()
+    time_taken = end_time - start_time
+    # print system log to file
+    print >> sys.stdout, "{} examples processed in {} secs, that is {} sec/imgs".format(len(image_list), time_taken, time_taken / float(len(image_list)))
 
 if __name__ == '__main__':
     main(sys.argv)
