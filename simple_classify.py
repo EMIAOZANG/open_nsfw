@@ -132,6 +132,7 @@ def main(argv):
         args.pretrained_model, caffe.TEST)
 
     start_time = time.time()
+    counter = 0
     for input_file in image_list:
     	image_data = open(input_file).read()
     
@@ -152,6 +153,9 @@ def main(argv):
             print >> output_fp, os.path.split(image_data)[-1] + ' ' + str(np.argmax(scores))
         else:
             print >> output_fp, os.path.split(image_data)[-1] + ' ' + ' '.join([str(x) for x in scores])
+        counter += 1
+	if counter % 100 == 0 and counter > 0:
+	   print >> sys.stdout, '{} images processed'.format(counter)
     end_time = time.time()
     time_taken = end_time - start_time
     # print system log to file
