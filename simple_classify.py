@@ -104,7 +104,7 @@ def main(argv):
     )
     parser.add_argument(
         "--output_mode",
-        default="labels"
+        default="labels",
         help="output mode, can be 'labels' or 'prob' "
     )
     parser.add_argument(
@@ -113,12 +113,11 @@ def main(argv):
     )
 
     args = parser.parse_args()
-    image_data = open(args.input_file).read()
 
     # batch processing
     image_list = []
     if os.path.isdir(args.input_file):
-        image_list = [x for x in os.listdir() if os.path.splitext(x)[-1] = '.jpg']
+        image_list = [x for x in os.listdir(args.input_file) if os.path.splitext(x)[-1] == '.jpg']
     else:
         image_list.append(args.input_file) # assumes input file is a jpg image
 
@@ -127,7 +126,8 @@ def main(argv):
         args.pretrained_model, caffe.TEST)
 
     start_time = time.time()
-    for image_data in image_list:
+    for input_file in image_list:
+    	image_data = open(input_file).read()
     
         # Load transformer
         # Note that the parameters are hard-coded for best results
