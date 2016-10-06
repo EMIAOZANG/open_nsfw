@@ -150,9 +150,9 @@ def main(argv):
         # Scores is the array containing SFW / NSFW image probabilities
         # scores[1] indicates the NSFW probability
         if args.output_mode == 'labels':
-            print >> output_fp, os.path.split(image_data)[-1] + ' ' + str(np.argmax(scores))
+            print >> output_fp, os.path.split(input_file)[-1] + ' ' + str(np.argmax(scores))
         else:
-            print >> output_fp, os.path.split(image_data)[-1] + ' ' + ' '.join([str(x) for x in scores])
+            print >> output_fp, os.path.split(input_file)[-1] + ' ' + ' '.join([str(x) for x in scores])
         counter += 1
 	if counter % 100 == 0 and counter > 0:
 	   print >> sys.stdout, '{} images processed'.format(counter)
