@@ -113,15 +113,21 @@ def main(argv):
     )
 
     args = parser.parse_args()
+    
+    # set output path, sys.stdout default
+    output_fp = sys.stdout
+    if args.save_to:
+	output_fp = open(args.save_to,'a')
 
     # batch processing
     image_list = []
     if os.path.isdir(args.input_file):
-        image_list = [x for x in os.listdir(args.input_file) if os.path.splitext(x)[-1] == '.jpg']
+        image_list = [os.path.join(args.input_file, x) for x in os.listdir(args.input_file) if os.path.splitext(x)[-1] == '.jpg']
     else:
         image_list.append(args.input_file) # assumes input file is a jpg image
 
     # Pre-load caffe model.
+    caffe.set_mode_cpu() # set to cpu only mode for prediction
     nsfw_net = caffe.Net(args.model_def,  # pylint: disable=invalid-name
         args.pretrained_model, caffe.TEST)
 
@@ -142,7 +148,7 @@ def main(argv):
     
         # Scores is the array containing SFW / NSFW image probabilities
         # scores[1] indicates the NSFW probability
-        if args.input_mode == 'labels':
+        if args.output_mode == 'labels':
             print >> output_fp, os.path.split(image_data)[-1] + ' ' + str(np.argmax(scores))
         else:
             print >> output_fp, os.path.split(image_data)[-1] + ' ' + ' '.join([str(x) for x in scores])
@@ -150,6 +156,9 @@ def main(argv):
     time_taken = end_time - start_time
     # print system log to file
     print >> sys.stdout, "{} examples processed in {} secs, that is {} sec/imgs".format(len(image_list), time_taken, time_taken / float(len(image_list)))
+    
+    if args.save_to:
+	output_fp.close()
 
 if __name__ == '__main__':
     main(sys.argv)
