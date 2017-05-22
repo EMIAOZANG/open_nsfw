@@ -1,16 +1,18 @@
+# flake8: noqa
 #!/usr/bin/env python
 """
 Script to run inference using ResNet like models given image file or dir
 
-Instruction: 
-    If you want to use this script to generate batch predictions, make sure you have a layer named as "prob_3" in your deploy.prototxt
+Instruction:
+    If you want to use this script to generate batch predictions,
+    make sure you have a layer named as "prob_3" in your deploy.prototxt
 """
 
 import numpy as np
 import os
 import sys
 import argparse
-import glob
+# import glob
 import time
 from PIL import Image
 from StringIO import StringIO
@@ -19,8 +21,8 @@ import caffe
 
 def resize_image(data, sz=(256, 256)):
     """
-    Resize image. Please use this resize logic for best results instead of the 
-    caffe, since it was used to generate training dataset 
+    Resize image. Please use this resize logic for best results instead of the
+    caffe, since it was used to generate training dataset
     :param str data:
         The image data
     :param sz tuple:
@@ -73,7 +75,7 @@ def caffe_preprocess_and_compute(pimg, caffe_transformer=None, caffe_net=None,
 
         input_name = caffe_net.inputs[0]
         all_outputs = caffe_net.forward_all(blobs=output_layers,
-                    **{input_name: transformed_image})
+                                            **{input_name: transformed_image})
 
         outputs = all_outputs[output_layers[0]][0].astype(float)
         return outputs
@@ -82,7 +84,7 @@ def caffe_preprocess_and_compute(pimg, caffe_transformer=None, caffe_net=None,
 
 
 def main(argv):
-    pycaffe_dir = os.path.dirname(__file__)
+    # pycaffe_dir = os.path.dirname(__file__)
 
     parser = argparse.ArgumentParser()
     # Required arguments: input file.
@@ -109,42 +111,53 @@ def main(argv):
         "--save_to",
         help="path to save results to"
     )
+    parser.add_argument(
+        "--gpu",
+        action="store_true",
+        help="flag to enaable GPU for inference"
+    )
 
     args = parser.parse_args()
-    
+
     # set output path, sys.stdout default
     output_fp = sys.stdout
     if args.save_to:
-	output_fp = open(args.save_to,'a')
+        output_fp = open(args.save_to, 'a')
 
     # batch processing
     image_list = []
     if os.path.isdir(args.input_file):
-        image_list = [os.path.join(args.input_file, x) for x in os.listdir(args.input_file) if os.path.splitext(x)[-1] == '.jpg']
+        image_list = [os.path.join(args.input_file, x)
+                      for x in os.listdir(args.input_file)
+                      if os.path.splitext(x)[-1] == '.jpg']
+    elif args.input_file.startswith('s3://') or args.input_file.startswith('s3n://'):
+        # Adding s3 read file support
+        image_urls =         
     else:
-        image_list.append(args.input_file) # assumes input file is a jpg image
+        image_list.append(args.input_file)  # assumes input file is a jpg image
 
     # Pre-load caffe model.
-    caffe.set_mode_cpu() # set to cpu only mode for prediction
+    caffe.set_mode_cpu()  # set to cpu only mode for prediction
     nsfw_net = caffe.Net(args.model_def,  # pylint: disable=invalid-name
-        args.pretrained_model, caffe.TEST)
+                         args.pretrained_model, caffe.TEST)
 
     start_time = time.time()
     counter = 0
     for input_file in image_list:
-    	image_data = open(input_file).read()
-    
+        image_data = open(input_file).read()
+
         # Load transformer
         # Note that the parameters are hard-coded for best results
-        caffe_transformer = caffe.io.Transformer({'data': nsfw_net.blobs['data'].data.shape})
-        caffe_transformer.set_transpose('data', (2, 0, 1))  # move image channels to outermost
+        caffe_transformer = caffe.io.Transformer(
+                {'data': nsfw_net.blobs['data'].data.shape})
+        caffe_transformer.set_transpose('data', (2, 0, 1))   # move image channels to outermost
         caffe_transformer.set_mean('data', np.array([104, 117, 123]))  # subtract the dataset-mean value in each channel
         caffe_transformer.set_raw_scale('data', 255)  # rescale from [0, 1] to [0, 255]
         caffe_transformer.set_channel_swap('data', (2, 1, 0))  # swap channels from RGB to BGR
-    
+
         # Classify.
         scores = caffe_preprocess_and_compute(image_data, caffe_transformer=caffe_transformer, caffe_net=nsfw_net, output_layers=['prob'])
-    
+
         # Scores is the array containing SFW / NSFW image probabilities
         # scores[1] indicates the NSFW probability
         if args.output_mode == 'labels':
@@ -152,15 +165,17 @@ def main(argv):
         else:
             print >> output_fp, os.path.split(input_file)[-1] + ' ' + ' '.join([str(x) for x in scores])
         counter += 1
-	if counter % 100 == 0 and counter > 0:
-	   print >> sys.stdout, '{} images processed'.format(counter)
+        if counter % 100 == 0 and counter > 0:
+            print >> sys.stdout, '{} images processed'.format(counter)
     end_time = time.time()
     time_taken = end_time - start_time
     # print system log to file
-    print >> sys.stdout, "{} examples processed in {} secs, that is {} sec/imgs".format(len(image_list), time_taken, time_taken / float(len(image_list)))
-    
+    print >> sys.stdout, "{} examples processed in {} secs, that is {} sec/imgs".format(
+            len(image_list),
+            time_taken, time_taken / float(len(image_list)))
+
     if args.save_to:
-	output_fp.close()
+        output_fp.close()
 
 if __name__ == '__main__':
     main(sys.argv)
