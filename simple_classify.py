@@ -132,7 +132,7 @@ def main(argv):
                       if os.path.splitext(x)[-1] == '.jpg']
     elif args.input_file.startswith('s3://') or args.input_file.startswith('s3n://'):
         # Adding s3 read file support
-        image_urls =         
+        pass
     else:
         image_list.append(args.input_file)  # assumes input file is a jpg image
 
@@ -144,7 +144,7 @@ def main(argv):
     start_time = time.time()
     counter = 0
     for input_file in image_list:
-        image_data = open(input_file).read()
+        image_data = StringIO(open(input_file).read())
 
         # Load transformer
         # Note that the parameters are hard-coded for best results
