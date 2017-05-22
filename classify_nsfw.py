@@ -101,8 +101,8 @@ def main(argv):
     )
     parser.add_argument(
         "--output_mode",
-        default="labels"
-        help="output mode, can be 'labels' or 'prob' "
+        default="labels",
+        help="output mode, can be labels or prob "
     )
     parser.add_argument(
         "--save_to",

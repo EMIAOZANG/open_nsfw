@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 """
-Copyright 2016 Yahoo Inc.
-Licensed under the terms of the 2 clause BSD license. 
-Please see LICENSE file in the project root for terms.
+Script to run inference using ResNet like models given image file or dir
 
 Instruction: 
     If you want to use this script to generate batch predictions, make sure you have a layer named as "prob_3" in your deploy.prototxt
